@@ -1,0 +1,92 @@
+<?php include("./inc/header.inc.php");?>
+<?php
+
+if(isset($_GET['u'])){
+$user= mysqli_real_escape_string($conn,$_GET['u']);
+if(ctype_alnum($user)){
+	//check user exists
+        $check=mysqli_query($conn,"SELECT username,first_name FROM users WHERRE username='$user'");
+	      
+	if(mysqli_num_rows($check)==1){
+		$get=mysqli_fetch_assoc($check);
+		$user=$GET['username'];
+		$firstname=$GET['first_name'];
+	}
+	else{
+		echo "<meta http-equiv=\"refersh\"content=\"0; url=http://localhost/social_net/home.php\">";
+		exit();
+	}
+}
+}
+//Check whether the user has uploaded a profile pic or not
+  $check_pic = mysqli_query($conn,"SELECT profile_pic FROM users WHERE username='$user'");
+  $get_pic_row = mysqli_fetch_assoc($check_pic);
+  $profile_pic_db = $get_pic_row['profile_pic'];
+  if ($profile_pic_db == "") {
+  $profile_pic = "./img/default_pic.jpg";
+  }
+  else
+  {
+  $profile_pic = "./userdata/profile_pics/".$profile_pic_db;
+  }
+$post = $_POST['post'];
+if($post!=""){
+	$date_added=date("Y-m-d");
+	$added_by=$user;
+	$user_posted_to="test123";
+	
+	
+	$query=msqli_query($conn,"INSERT INTO posts VALUES('','$posts','$date_added','$added_by','$user_posted_to')");
+	if(mysqli_connect_error()){
+	die("Connected failed: .$conn->connect_error");}
+  ?>
+
+<div class="postForm">
+<textarea id="post" name="post" rows="4" cols="60">
+
+</textarea>
+ 
+ <input type="submit" name="send" onclick="javascript:send_posts()" value="Post" style="background-color: #DCE5EE; float: right;border: 1px solid #666">
+  
+</div>
+ 
+<div class="ProfilePosts">
+        <?php
+		$getposts=mysqli_query($conn,"SELECT * FROM posts WHERRE user_posted_to='$user' ORDER BY id DESC LIMIT 10");
+if(mysqli_connect_error()){
+	die("Connected failed: .$conn->connect_error");
+}
+	while($row = mysqli_fetch_assoc($getposts)){
+  $id=$row['id'];
+  $body=$row['body'];
+$date_added=$row['date_added'];
+$added_by=$row['added_by'];
+$user_posted_to=$row['user_posted_to'];  
+echo "<div class='posted_by'><a href='$added_by'>$added_by</a> - $date_added - </div>$nbsp;$nbsp;$body<";
+}
+?>
+</div>
+
+<img src="<?php echo $profile_pic; ?>" height="250" width="200" alt="<?php echo $user; ?>'s Profile" title="<?php echo $user; ?>'s Profile">
+<br>
+<div class="textHeader"><?php echo $user; ?>'s Profile</div>
+<div class="profileLeftSideContent">
+<?php
+$about_query=mysqli_query($conn,"SELECT bio FROM users WHERE username='$user'");
+$get_result=mysqli_fetch_assoc($about_query);
+$about_the_user=$get_result['bio'];
+ echo $about_the_user;
+?>
+</div>
+<div class="textHeader"><?php echo $user; ?>'s Friends</div>
+<div class="profileLeftSideContent">
+<img src="#" height="50" width="40">&nbsp;&nbsp; 
+<img src="#" height="50" width="40">&nbsp;&nbsp;
+<img src="#" height="50" width="40">&nbsp;&nbsp;
+<img src="#" height="50" width="40">&nbsp;&nbsp;
+<img src="#" height="50" width="40">&nbsp;&nbsp;
+<img src="#" height="50" width="40">&nbsp;&nbsp;
+<img src="#" height="50" width="40">&nbsp;&nbsp;
+<img src="#" height="50" width="40">&nbsp;&nbsp;
+</div>
+</div
